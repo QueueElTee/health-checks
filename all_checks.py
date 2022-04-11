@@ -3,6 +3,7 @@ import os
 import sys
 import shutil
 import socket
+import psutil
 
 def check_reboot():
 	"""Returns True if the computer has a pending reboot"""
@@ -31,11 +32,16 @@ def check_no_network():
 	except:
 		return True
 
+def check_cpu_constrained():
+	"""Returns True if the CPU is having too much usage False otherwise"""
+	return psutil.cpu_percent(1) > 75
+
 def main():
 	checks = [
 		(check_reboot, "Pending Reboot"),
 		(check_root_full, "Root partition full"),
-		(check_no_network, "No working network")
+		(check_no_network, "No working network"),
+		(check_cpu_constrained, "Overloaded CPU")
 		]
 	
 	everything_ok = True
